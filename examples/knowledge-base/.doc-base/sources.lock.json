@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "api": {
+      "repository": "./git-fixture",
+      "requestedRef": "main",
+      "resolvedCommit": "42753e8b5b38a674190fa9f590629a05f1f4d059",
+      "type": "git"
+    },
+    "portal": {
+      "type": "local"
+    }
+  }
+}

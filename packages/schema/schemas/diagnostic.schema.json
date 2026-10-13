@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doc-base.dev/schemas/v1/diagnostic.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "severity", "message", "suppressible"],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^DB[A-Z][0-9]{3}$"
+    },
+    "severity": {
+      "enum": ["error", "warning", "info"]
+    },
+    "message": {
+      "type": "string"
+    },
+    "sourceId": {
+      "type": "string"
+    },
+    "file": {
+      "type": "string"
+    },
+    "range": {
+      "$ref": "#/$defs/range"
+    },
+    "documentKey": {
+      "type": "string"
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "range": {
+            "$ref": "#/$defs/range"
+          }
+        }
+      }
+    },
+    "help": {
+      "type": "string"
+    },
+    "suppressible": {
+      "type": "boolean"
+    },
+    "suppressedBy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "reason"],
+      "properties": {
+        "scope": {
+          "enum": ["document", "project"]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["line", "column"],
+      "properties": {
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/position"
+        },
+        "end": {
+          "$ref": "#/$defs/position"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+node_modules
+**/dist
+**/.doc-base
+**/git-fixture
+package-lock.json
+.artifacts
+
+**/.astro
+test-results
+playwright-report

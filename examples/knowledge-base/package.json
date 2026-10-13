@@ -1,0 +1,19 @@
+{
+  "name": "example-documentation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "doc-base dev",
+    "validate": "doc-base validate",
+    "build": "doc-base build",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "doc-base": "1.0.0",
+    "doc-base-extension-example": "file:../extension"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  }
+}

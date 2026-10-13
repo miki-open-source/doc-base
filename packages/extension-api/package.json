@@ -1,0 +1,34 @@
+{
+  "name": "@doc-base/extension-api",
+  "version": "1.0.0",
+  "description": "Connected static documentation infrastructure",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@doc-base/schema": "1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miki-open-source/doc-base.git",
+    "directory": "packages/extension-api"
+  },
+  "homepage": "https://github.com/miki-open-source/doc-base#readme",
+  "bugs": {
+    "url": "https://github.com/miki-open-source/doc-base/issues"
+  }
+}

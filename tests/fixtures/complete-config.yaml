@@ -1,0 +1,95 @@
+schemaVersion: 1
+
+site:
+  title: Example Documentation
+  description: Connected documentation for an example product
+  baseUrl: /docs/
+  outputDir: dist
+  trailingSlash: always
+  defaultAudience: public
+
+sources:
+  portal:
+    type: local
+    path: ./docs
+    content: .
+    include: ["**/*.md", "**/*.mdx"]
+    exclude: ["**/_*.md", "**/node_modules/**"]
+    routePrefix: ""
+  api:
+    type: git
+    repository: https://example.invalid/example/api-docs.git
+    ref: main
+    content: docs
+    include: ["**/*.md", "**/*.mdx"]
+    routePrefix: api
+
+audiences:
+  public:
+    label: Public
+    description: General product users
+  contributor:
+    label: Contributor
+    description: People who develop or maintain the project
+
+relationships:
+  related:
+    label: Related
+    inverse: related
+  prerequisite:
+    label: Prerequisite
+    inverse: depends-on
+  depends-on:
+    label: Depends on
+    inverse: prerequisite
+
+navigation:
+  - group: Guides
+    items:
+      - doc: getting-started
+      - autogenerate:
+          source: portal
+          directory: guides
+  - group: API
+    audiences: [contributor]
+    items:
+      - autogenerate:
+          source: api
+          directory: .
+  - link:
+      label: Project repository
+      href: https://example.invalid/example/doc-base
+
+search:
+  enabled: true
+  indexBody: true
+  indexEmbeds: true
+  maxHeadingDepth: 4
+
+validation:
+  failOn: error
+  strictRefs: true
+  strictNavigation: true
+  suppressions:
+    - code: DBV240
+      path: legacy/**
+      reason: Legacy pages are being migrated
+      expires: 2027-01-31
+
+embeds:
+  maxDepth: 10
+  duplicateHeadingIds: prefix
+
+cache:
+  directory: .doc-base/cache
+  maxAge: 24h
+
+extensions:
+  - package: doc-base-extension-example
+    options:
+      enabled: true
+
+development:
+  host: 127.0.0.1
+  port: 4321
+  open: false

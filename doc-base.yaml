@@ -1,0 +1,12 @@
+schemaVersion: 1
+site:
+  title: doc-base
+  description: Connected documentation infrastructure
+sources:
+  docs:
+    type: local
+    path: ./docs
+navigation:
+  - autogenerate:
+      source: docs
+      directory: .

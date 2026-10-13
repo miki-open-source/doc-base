@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doc-base.dev/schemas/v1/build-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "docBaseVersion": {
+      "type": "string"
+    },
+    "configFingerprint": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "selectedAudiences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": ["local", "git"]
+          },
+          "requestedRef": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "overridden": {
+            "type": "boolean"
+          },
+          "override": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["id", "type", "revision", "overridden"]
+      }
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "apiVersion": {
+            "const": "1"
+          }
+        },
+        "required": ["package", "version", "apiVersion"]
+      }
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "urlByAudience": {
+            "type": "object",
+            "additionalProperties": {
+              "type": ["string", "null"]
+            }
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "required": ["key", "sourcePath", "urlByAudience", "contentHash"]
+      }
+    },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": ["from", "to"]
+      }
+    },
+    "outputFingerprint": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "docBaseVersion",
+    "configFingerprint",
+    "createdAt",
+    "selectedAudiences",
+    "sources",
+    "extensions",
+    "documents",
+    "redirects",
+    "outputFingerprint"
+  ]
+}

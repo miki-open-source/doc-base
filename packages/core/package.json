@@ -1,0 +1,51 @@
+{
+  "name": "@doc-base/core",
+  "version": "1.0.0",
+  "description": "Connected static documentation infrastructure",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@doc-base/extension-api": "1.0.0",
+    "@doc-base/schema": "1.0.0",
+    "@doc-base/sources": "1.0.0",
+    "@types/picomatch": "^4.0.3",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "github-slugger": "^2.0.0",
+    "hast-util-from-html": "^2.0.3",
+    "hast-util-to-html": "^9.0.5",
+    "import-meta-resolve": "^4.2.0",
+    "picomatch": "^4.0.7",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
+    "yaml": "^2.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miki-open-source/doc-base.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/miki-open-source/doc-base#readme",
+  "bugs": {
+    "url": "https://github.com/miki-open-source/doc-base/issues"
+  }
+}

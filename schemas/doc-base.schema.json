@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doc-base.dev/schemas/v1/doc-base.schema.json",
+  "title": "doc-base configuration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "site", "sources"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string",
+          "pattern": "^/(?:[^?#]*/)?$",
+          "default": "/"
+        },
+        "outputDir": {
+          "type": "string",
+          "minLength": 1,
+          "default": "dist"
+        },
+        "trailingSlash": {
+          "enum": ["always", "never", "ignore"],
+          "default": "always"
+        },
+        "defaultAudience": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "audiences": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/id"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inverse": {
+            "$ref": "#/$defs/id"
+          },
+          "showOnPage": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    },
+    "navigation": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/navigationItem"
+      }
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "indexBody": {
+          "type": "boolean",
+          "default": true
+        },
+        "indexEmbeds": {
+          "type": "boolean",
+          "default": true
+        },
+        "maxHeadingDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 4
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "failOn": {
+          "enum": ["error", "warning", "never"],
+          "default": "error"
+        },
+        "strictRefs": {
+          "type": "boolean",
+          "default": true
+        },
+        "strictNavigation": {
+          "type": "boolean",
+          "default": true
+        },
+        "suppressions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/suppression"
+          }
+        }
+      }
+    },
+    "embeds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "duplicateHeadingIds": {
+          "enum": ["prefix", "error"],
+          "default": "prefix"
+        }
+      }
+    },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "directory": {
+          "type": "string",
+          "default": ".doc-base/cache"
+        },
+        "maxAge": {
+          "type": "string",
+          "pattern": "^[0-9]+(?:ms|s|m|h|d)$",
+          "default": "24h"
+        }
+      }
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["package"],
+        "properties": {
+          "package": {
+            "type": "string",
+            "minLength": 1
+          },
+          "options": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "development": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "type": "string",
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 4321
+        },
+        "open": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "path"],
+          "properties": {
+            "type": {
+              "const": "local"
+            },
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content": {
+              "type": "string",
+              "default": "."
+            },
+            "include": {
+              "$ref": "#/$defs/globs"
+            },
+            "exclude": {
+              "$ref": "#/$defs/globs"
+            },
+            "routePrefix": {
+              "$ref": "#/$defs/routePrefix"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "repository", "ref"],
+          "properties": {
+            "type": {
+              "const": "git"
+            },
+            "repository": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content": {
+              "type": "string",
+              "default": "."
+            },
+            "include": {
+              "$ref": "#/$defs/globs"
+            },
+            "exclude": {
+              "$ref": "#/$defs/globs"
+            },
+            "routePrefix": {
+              "$ref": "#/$defs/routePrefix"
+            }
+          }
+        }
+      ]
+    },
+    "globs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": ["**/*.md", "**/*.mdx"]
+    },
+    "routePrefix": {
+      "type": "string",
+      "pattern": "^(?:[a-zA-Z0-9._~-]+(?:/[a-zA-Z0-9._~-]+)*)?$"
+    },
+    "navigationItem": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["doc"],
+          "properties": {
+            "doc": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "audiences": {
+              "$ref": "#/$defs/idArray"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["group", "items"],
+          "properties": {
+            "group": {
+              "type": "string",
+              "minLength": 1
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/navigationItem"
+              }
+            },
+            "collapsed": {
+              "type": "boolean",
+              "default": false
+            },
+            "audiences": {
+              "$ref": "#/$defs/idArray"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["autogenerate"],
+          "properties": {
+            "autogenerate": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source", "directory"],
+              "properties": {
+                "source": {
+                  "$ref": "#/$defs/id"
+                },
+                "directory": {
+                  "type": "string"
+                }
+              }
+            },
+            "audiences": {
+              "$ref": "#/$defs/idArray"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["link"],
+          "properties": {
+            "link": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "href"],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "href": {
+                  "type": "string",
+                  "format": "uri-reference"
+                }
+              }
+            },
+            "audiences": {
+              "$ref": "#/$defs/idArray"
+            }
+          }
+        }
+      ]
+    },
+    "idArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "suppression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "reason"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^DB[A-Z][0-9]{3}$"
+        },
+        "path": {
+          "type": "string",
+          "default": "**"
+        },
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10
+        },
+        "expires": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  }
+}

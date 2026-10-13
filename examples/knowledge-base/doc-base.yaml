@@ -1,0 +1,48 @@
+schemaVersion: 1
+site:
+  title: Example Documentation
+  defaultAudience: public
+sources:
+  portal:
+    type: local
+    path: ./content
+  api:
+    type: git
+    repository: ./git-fixture
+    ref: main
+    content: docs
+    routePrefix: api
+audiences:
+  public:
+    label: Public
+  contributor:
+    label: Contributor
+relationships:
+  related:
+    label: Related
+    inverse: related
+  prerequisite:
+    label: Prerequisite
+    inverse: depends-on
+  depends-on:
+    label: Depends on
+    inverse: prerequisite
+navigation:
+  - doc: welcome
+  - group: Guides
+    items:
+      - autogenerate:
+          source: portal
+          directory: guides
+  - group: Shared
+    items:
+      - autogenerate:
+          source: portal
+          directory: shared
+  - group: API
+    items:
+      - autogenerate:
+          source: api
+          directory: .
+extensions:
+  - package: doc-base-extension-example

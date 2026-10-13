@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doc-base.dev/schemas/v1/frontmatter.schema.json",
+  "title": "doc-base document frontmatter v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title"],
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/docId"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?(/|$))[^?#]+$"
+    },
+    "audiences": {
+      "$ref": "#/$defs/idArray"
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "order": {
+      "type": "number"
+    },
+    "nav": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hidden": {
+          "type": "boolean",
+          "default": false
+        },
+        "group": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "target"],
+        "properties": {
+          "type": {
+            "$ref": "#/$defs/id"
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "redirects": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^/[^?#]*$"
+      }
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "type": "boolean",
+          "default": false
+        },
+        "boost": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "default": 1
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "suppress": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "reason"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^DB[A-Z][0-9]{3}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 10
+              },
+              "expires": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        }
+      }
+    },
+    "draft": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "docId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._~-]*$",
+      "maxLength": 160
+    },
+    "idArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    }
+  }
+}

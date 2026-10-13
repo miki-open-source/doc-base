@@ -1,6 +1,6 @@
 # Implementation and release readiness
 
-The v1 library, CLI, schemas, Astro/Starlight renderer, neutral sample, self-hosted documentation, Git hooks, CI matrix, and release workflow are implemented. The repository started empty. The public repository is [miki-open-source/doc-base](https://github.com/miki-open-source/doc-base). The source is published; hosted CI checks are in progress. Local checks are distinct from hosted CI and registry publication; the specification’s definition of done still requires those external gates.
+The v1 library, CLI, schemas, Astro/Starlight renderer, neutral sample, self-hosted documentation, Git hooks, CI matrix, and release workflow are implemented. The repository started empty. The public repository is [miki-open-source/doc-base](https://github.com/miki-open-source/doc-base). The source is published, and the [hosted Quality run](https://github.com/miki-open-source/doc-base/actions/runs/38479443371) passed all seven jobs: Linux, macOS, and Windows on Node 22 and 24, plus packed consumers and browser tests. Registry publication and repository/npm protections remain external release requirements below.
 
 ## Automated acceptance evidence
 
@@ -23,10 +23,9 @@ npm, pnpm, and Yarn with `nodeLinker: node-modules` are supported. Yarn Plug’n
 
 ## External release requirements
 
-1. Upload the source and run the checked-in Linux/macOS/Windows, Node 22/24 CI jobs. Local macOS results do not establish that hosted matrix has passed.
-2. Require all quality jobs before merge, protect version tags, enable private vulnerability reporting, and require approval for the npm-release environment.
-3. Confirm ownership/availability of the six public npm package names and configure trusted publishing for this repository’s release workflow. Review the documented moderate dependency advisory before approving publication.
-4. Repository/homepage/issue metadata points to miki-open-source/doc-base. Host the canonical schema URLs before release. The schema IDs come from the supplied specification; this local implementation does not provision the doc-base.dev domain.
-5. Review the coordinated changelog and version, run the approved release workflow, and retain its per-package publish report and registry-install/build verification. No npm package has been published by this task.
+1. Require all quality jobs before merge, protect version tags, enable private vulnerability reporting, and require approval for the npm-release environment.
+2. Confirm ownership/availability of the six public npm package names and configure trusted publishing for this repository’s release workflow. Review the documented moderate dependency advisory before approving publication.
+3. Repository/homepage/issue metadata points to miki-open-source/doc-base. Host the canonical schema URLs before release. The schema IDs come from the supplied specification; this local implementation does not provision the doc-base.dev domain.
+4. Review the coordinated changelog and version, run the approved release workflow, and retain its per-package publish report and registry-install/build verification. No npm package has been published by this task.
 
 The release script publishes the inspected tarballs, verifies the checked-out tag and coordinated versions, records partial success, and verifies the registry-installed CLI with an actual initialized production build. A partial publish must be documented and repaired with a new version; published versions must never be overwritten.

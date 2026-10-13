@@ -2,7 +2,7 @@
 
 Build connected documentation from local directories and Git repositories with TypeScript, Astro, and Starlight.
 
-Requires Node.js 22.12 or later. This repository implements the v1 specification locally; see [IMPLEMENTATION.md](IMPLEMENTATION.md) for verified scope and remaining acceptance work.
+Requires Node.js 22.12 or later. This repository implements the v1 documentation pipeline; see [IMPLEMENTATION.md](IMPLEMENTATION.md) for verified scope and release readiness.
 
 ```sh
 npm ci

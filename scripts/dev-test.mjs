@@ -148,6 +148,11 @@ try {
       );
   child.kill("SIGINT");
   const termination = await exited;
-  assert.equal(termination.code, 130);
+  if (process.platform === "win32") {
+    // Node forcibly terminates Windows children instead of delivering SIGINT.
+    assert.equal(termination.signal, "SIGINT");
+  } else {
+    assert.equal(termination.code, 130);
+  }
   await rm(root, { recursive: true, force: true });
 }

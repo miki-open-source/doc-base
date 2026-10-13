@@ -1,6 +1,6 @@
 # Implementation and release readiness
 
-The v1 library, CLI, schemas, Astro/Starlight renderer, neutral sample, self-hosted documentation, Git hooks, CI matrix, and release workflow are implemented. The repository started empty. The public repository is [miki-open-source/doc-base](https://github.com/miki-open-source/doc-base). GitHub access is connected; the source upload and hosted CI checks are in progress. Local checks are distinct from hosted CI and registry publication; the specification’s definition of done still requires those external gates.
+The v1 library, CLI, schemas, Astro/Starlight renderer, neutral sample, self-hosted documentation, Git hooks, CI matrix, and release workflow are implemented. The repository started empty. The public repository is [miki-open-source/doc-base](https://github.com/miki-open-source/doc-base). The source is published; hosted CI checks are in progress. Local checks are distinct from hosted CI and registry publication; the specification’s definition of done still requires those external gates.
 
 ## Automated acceptance evidence
 

@@ -27,6 +27,12 @@ import {
   type SourceSnapshot,
 } from "@doc-base/schema";
 const execute = promisify(execFile);
+const gitOptions = [
+  "-c",
+  "core.hooksPath=/dev/null",
+  "-c",
+  "core.longpaths=true",
+];
 export const hash = (input: string | Uint8Array): string =>
   createHash("sha256").update(input).digest("hex");
 export function redact(value: string): string {
@@ -68,20 +74,16 @@ async function git(
   signal?: AbortSignal,
 ): Promise<string> {
   try {
-    const result = await execute(
-      "git",
-      ["-c", "core.hooksPath=/dev/null", ...args],
-      {
-        cwd,
-        signal,
-        env: {
-          ...process.env,
-          GIT_TERMINAL_PROMPT: "0",
-          GIT_CONFIG_NOSYSTEM: "1",
-        },
-        maxBuffer: 16 * 1024 * 1024,
+    const result = await execute("git", [...gitOptions, ...args], {
+      cwd,
+      signal,
+      env: {
+        ...process.env,
+        GIT_TERMINAL_PROMPT: "0",
+        GIT_CONFIG_NOSYSTEM: "1",
       },
-    );
+      maxBuffer: 16 * 1024 * 1024,
+    });
     return result.stdout.trim();
   } catch (error) {
     fail(
@@ -843,7 +845,7 @@ async function gitBlob(
   try {
     const result = await execute(
       "git",
-      ["-c", "core.hooksPath=/dev/null", "cat-file", "blob", oid],
+      [...gitOptions, "cat-file", "blob", oid],
       {
         cwd: repository,
         signal,

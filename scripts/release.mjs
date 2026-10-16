@@ -10,6 +10,7 @@ import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import assert from "node:assert/strict";
+import { runPnpm } from "./pnpm.mjs";
 const directories = [
   "schema",
   "extension-api",
@@ -67,9 +68,15 @@ const save = () =>
 await save();
 for (const pkg of packages) {
   try {
-    execFileSync(
-      "npm",
-      ["publish", pkg.tarball, "--access", "public", "--provenance"],
+    runPnpm(
+      [
+        "publish",
+        pkg.tarball,
+        "--access",
+        "public",
+        "--provenance",
+        "--no-git-checks",
+      ],
       { stdio: "inherit" },
     );
     report.published.push(pkg.name);
@@ -86,7 +93,11 @@ for (const pkg of packages) {
 const consumer = await mkdtemp(path.join(tmpdir(), "doc-base-release-"));
 try {
   await writeFile(path.join(consumer, "package.json"), "{}");
-  execFileSync("npm", ["install", `doc-base@${root.version}`], {
+  await writeFile(
+    path.join(consumer, "pnpm-workspace.yaml"),
+    "allowBuilds:\n  esbuild: true\n  sharp: true\n",
+  );
+  runPnpm(["add", `doc-base@${root.version}`], {
     cwd: consumer,
     stdio: "inherit",
   });

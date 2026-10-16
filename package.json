@@ -26,7 +26,8 @@
     "test:dev": "node scripts/dev-test.mjs",
     "docs:reference": "node scripts/schema-reference.mjs && node scripts/diagnostics-reference.mjs",
     "test:docs": "node scripts/schema-reference.mjs --check && node scripts/diagnostics-reference.mjs --check && node scripts/documentation-test.mjs",
-    "test:managers": "node scripts/manager-test.mjs"
+    "test:managers": "node scripts/manager-test.mjs",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -27,4 +27,4 @@ Run commands from the repository root after installation and the first build. `p
 | Dependency policy    | `pnpm audit --prod --audit-level=high`, `pnpm run audit:licenses`                                |
 | Reinstall hooks      | `pnpm run prepare` (also runs during installation)                                               |
 
-`test:package` creates pnpm tarballs and checks them in a clean npm consumer; `test:managers` additionally checks pnpm and Yarn consumers without extra tooling setup. npm is also used by the approved registry publishing workflow for trusted publishing and provenance. The repository itself uses pnpm for installs, builds, tests, and audits.
+`test:package` creates pnpm tarballs and checks them in a clean npm consumer; `test:managers` additionally checks pnpm and Yarn consumers without extra tooling setup. The approved registry publishing workflow uses `pnpm run release` for trusted publishing with provenance and a clean pnpm registry-install/build check. Run it only through that workflow with the reviewed release tag and publisher configuration in place.

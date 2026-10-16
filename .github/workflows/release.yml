@@ -26,7 +26,6 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-      - run: npm install --global npm@12.2.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm run check
@@ -42,7 +41,7 @@ jobs:
       - name: Verify coordinated version and publish with provenance
         env:
           RELEASE_TAG: ${{ inputs.tag }}
-        run: node scripts/release.mjs
+        run: pnpm run release
 
       - uses: actions/upload-artifact@v7
         if: always()

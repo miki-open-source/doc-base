@@ -20,7 +20,7 @@
     }
   },
   "dependencies": {
-    "@doc-base/schema": "1.0.0"
+    "@doc-base/schema": "workspace:*"
   },
   "repository": {
     "type": "git",

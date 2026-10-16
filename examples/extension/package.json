@@ -17,6 +17,6 @@
     "README.md"
   ],
   "dependencies": {
-    "@doc-base/extension-api": "1.0.0"
+    "@doc-base/extension-api": "workspace:*"
   }
 }

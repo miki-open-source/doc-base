@@ -21,23 +21,24 @@ jobs:
         with:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
       - run: npm install --global npm@12.2.0
-      - run: npm ci
-      - run: npm run build
-      - run: npm run check
-      - run: npm run test:docs
-      - run: npm run example:setup
-      - run: npm run test:package
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run check
+      - run: pnpm run test:docs
+      - run: pnpm run example:setup
+      - run: pnpm run test:package
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run test:e2e
         env:
           TEST_OUTPUT_DIRECTORY: .artifacts/example
-      - run: npm audit --omit=dev --audit-level=high
-      - run: npm run audit:licenses
+      - run: pnpm audit --prod --audit-level=high
+      - run: pnpm run audit:licenses
       - name: Verify coordinated version and publish with provenance
         env:
           RELEASE_TAG: ${{ inputs.tag }}

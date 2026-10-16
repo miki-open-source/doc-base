@@ -38,12 +38,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.11.2
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npx doc-base build --frozen-lockfile
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec doc-base build --frozen-lockfile
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

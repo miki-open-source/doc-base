@@ -4,6 +4,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import assert from "node:assert/strict";
 import { tmpdir } from "node:os";
+import { runPnpm } from "./pnpm.mjs";
 const root = process.cwd();
 const artifacts = path.join(root, ".artifacts");
 await mkdir(artifacts, { recursive: true });
@@ -19,12 +20,12 @@ const tarballs = [];
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 for (const name of packages) {
   const output = JSON.parse(
-    execFileSync(npm, ["pack", "--json", "--pack-destination", artifacts], {
+    runPnpm(["pack", "--json", "--pack-destination", artifacts], {
       cwd: path.join(root, "packages", name),
       encoding: "utf8",
     }),
   );
-  const files = output[0].files.map((file) => file.path);
+  const files = output.files.map((file) => file.path);
   for (const required of [
     "LICENSE",
     "README.md",
@@ -48,15 +49,15 @@ for (const name of packages) {
       );
   if (files.some((file) => file.includes("node_modules")))
     throw new Error("Packed dependencies");
-  tarballs.push(path.join(artifacts, output[0].filename));
+  tarballs.push(path.resolve(artifacts, output.filename));
 }
 const extensionPackage = JSON.parse(
-  execFileSync(npm, ["pack", "--json", "--pack-destination", artifacts], {
+  runPnpm(["pack", "--json", "--pack-destination", artifacts], {
     cwd: path.join(root, "examples/extension"),
     encoding: "utf8",
   }),
-)[0];
-const extensionTarball = path.join(artifacts, extensionPackage.filename);
+);
+const extensionTarball = path.resolve(artifacts, extensionPackage.filename);
 const consumer = await mkdtemp(path.join(tmpdir(), "doc-base-consumer-"));
 try {
   await writeFile(
@@ -158,7 +159,8 @@ if(!VERSION || !extension || !config || [compile,resolveSources,buildSite,main,c
       recursive: true,
       filter: (source) =>
         !source.includes(`${path.sep}.doc-base`) &&
-        !source.includes(`${path.sep}dist`),
+        !source.includes(`${path.sep}dist`) &&
+        !source.includes(`${path.sep}node_modules`),
     },
   );
   execFileSync(

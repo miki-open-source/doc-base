@@ -1,8 +1,13 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-const lock = JSON.parse(await readFile("package-lock.json", "utf8"));
-const entries = Object.entries(lock.packages)
-  .filter(([name, pkg]) => name.includes("node_modules") && !pkg.link)
-  .map(([name, pkg]) => ({ name, version: pkg.version, license: pkg.license }));
+import { writeFile, mkdir } from "node:fs/promises";
+import { runPnpm } from "./pnpm.mjs";
+const licenses = JSON.parse(
+  runPnpm(["licenses", "list", "--recursive", "--json"], { encoding: "utf8" }),
+);
+const entries = Object.entries(licenses).flatMap(([license, packages]) =>
+  packages.flatMap((pkg) =>
+    pkg.versions.map((version) => ({ name: pkg.name, version, license })),
+  ),
+);
 const supported = new Set([
   "MIT",
   "ISC",

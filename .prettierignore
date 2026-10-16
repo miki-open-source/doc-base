@@ -2,7 +2,7 @@ node_modules
 **/dist
 **/.doc-base
 **/git-fixture
-package-lock.json
+pnpm-lock.yaml
 .artifacts
 
 **/.astro

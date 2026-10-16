@@ -16,6 +16,6 @@ const text = await format(
 if (process.argv.includes("--check")) {
   if ((await readFile("docs/diagnostics.md", "utf8")) !== text)
     throw new Error(
-      "Diagnostic reference is out of date. Run npm run docs:reference.",
+      "Diagnostic reference is out of date. Run pnpm run docs:reference.",
     );
 } else await writeFile("docs/diagnostics.md", text);

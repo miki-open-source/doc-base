@@ -38,12 +38,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.11.2
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npx doc-base build --frozen-lockfile
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec doc-base build --frozen-lockfile
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
@@ -65,6 +68,8 @@ The upload/deployment flow follows [GitHub’s Pages workflow guidance](https://
 
 ## Release gate
 
-The release workflow checks out the requested version tag, runs quality and packed-consumer gates, and publishes those inspected tarballs in dependency order. It verifies the tag and coordinated versions against the reviewed changelog. The npm-release environment must require approval and be registered as the npm trusted publisher for every package. Trusted publishing requires npm 11.5.1 or later and Node 22.14 or later; this workflow uses npm 12.2 and Node 24. [npm trusted publishing documentation](https://docs.npmjs.com/trusted-publishers/).
+The release workflow checks out the requested version tag, runs quality and packed-consumer gates, and uses `pnpm run release` to publish those inspected tarballs in dependency order. It verifies the tag and coordinated versions against the reviewed changelog. The npm-release environment must require approval and be registered as the npm trusted publisher for every package. This workflow uses pnpm 12.11.2 and Node 24; pnpm publishes natively with OIDC and explicit provenance. See [pnpm publishing documentation](https://pnpm.io/cli/publish#--provenance) and [npm trusted publisher configuration](https://docs.npmjs.com/trusted-publishers/).
+
+Publishing uses `--no-git-checks` because the workflow checks out a release tag rather than a branch. The release script independently requires the checked-out commit to match that exact tag and checks coordinated versions before attempting any publish.
 
 A registry install, initialization, and production build run after publishing. Each successful package publish is recorded in a release-report artifact. If publishing stops partway through, maintainers must immediately document which packages are public and issue a new coordinated version to repair the release. Never overwrite or reuse published versions. Only the latest stable release receives fixes; user-visible changes require a reviewed changelog entry, and breaking changes require migration notes.

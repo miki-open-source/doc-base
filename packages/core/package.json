@@ -20,9 +20,9 @@
     }
   },
   "dependencies": {
-    "@doc-base/extension-api": "1.0.0",
-    "@doc-base/schema": "1.0.0",
-    "@doc-base/sources": "1.0.0",
+    "@doc-base/extension-api": "workspace:*",
+    "@doc-base/schema": "workspace:*",
+    "@doc-base/sources": "workspace:*",
     "@types/picomatch": "^4.0.3",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",

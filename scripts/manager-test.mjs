@@ -2,6 +2,8 @@ import { mkdtemp, readFile, writeFile, rm, readdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { tmpdir } from "node:os";
+import { fileURLToPath } from "node:url";
+import { runPnpm } from "./pnpm.mjs";
 const artifacts = path.resolve(".artifacts");
 const packages = {};
 for (const file of await readdir(artifacts))
@@ -22,10 +24,9 @@ for (const file of await readdir(artifacts))
   }
 if (Object.keys(packages).length !== 6)
   throw new Error("Run the package test first to create tarballs.");
-const pnpm = process.env.TEST_PNPM_CLI;
-const yarn = process.env.TEST_YARN_CLI;
-if (!pnpm || !yarn)
-  throw new Error("Provide TEST_PNPM_CLI and TEST_YARN_CLI paths.");
+const yarn = fileURLToPath(
+  import.meta.resolve("@yarnpkg/cli-dist/bin/yarn.js"),
+);
 for (const mode of ["pnpm", "yarn-node-modules"]) {
   const directory = await mkdtemp(path.join(tmpdir(), "doc-base-manager-"));
   try {
@@ -57,9 +58,8 @@ for (const mode of ["pnpm", "yarn-node-modules"]) {
         path.join(directory, ".yarnrc.yml"),
         `nodeLinker: ${mode === "yarn-pnp" ? "pnp" : "node-modules"}\nenableGlobalCache: false\n`,
       );
-    const tool = mode === "pnpm" ? pnpm : yarn;
-    const run = (args) =>
-      execFileSync(process.execPath, [tool, ...args], {
+    const run = (args) => {
+      const options = {
         cwd: directory,
         stdio: "inherit",
         env: {
@@ -67,7 +67,11 @@ for (const mode of ["pnpm", "yarn-node-modules"]) {
           ASTRO_TELEMETRY_DISABLED: "1",
           YARN_ENABLE_IMMUTABLE_INSTALLS: "false",
         },
-      });
+      };
+      return mode === "pnpm"
+        ? runPnpm(args, options)
+        : execFileSync(process.execPath, [yarn, ...args], options);
+    };
     run(["install"]);
     const execute =
       mode === "pnpm" ? ["exec", "doc-base"] : ["exec", "doc-base"];

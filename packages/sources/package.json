@@ -20,7 +20,7 @@
     }
   },
   "dependencies": {
-    "@doc-base/schema": "1.0.0",
+    "@doc-base/schema": "workspace:*",
     "@types/picomatch": "^4.0.3",
     "picomatch": "^4.0.7"
   },

@@ -3,9 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "engines": {
     "node": ">=22.12.0"
   },
@@ -16,7 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm test",
+    "check": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm test",
     "prepare": "node scripts/hooks.mjs",
     "example:setup": "node scripts/example-setup.mjs",
     "example:validate": "node packages/cli/dist/index.js validate --config examples/knowledge-base/doc-base.yaml",
@@ -29,13 +26,14 @@
     "test:dev": "node scripts/dev-test.mjs",
     "docs:reference": "node scripts/schema-reference.mjs && node scripts/diagnostics-reference.mjs",
     "test:docs": "node scripts/schema-reference.mjs --check && node scripts/diagnostics-reference.mjs --check && node scripts/documentation-test.mjs",
-    "test:managers": "node scripts/manager-test.mjs"
+    "test:managers": "node scripts/manager-test.mjs",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.0",
     "@types/node": "^26.6.5",
-    "doc-base-extension-example": "file:examples/extension",
+    "doc-base-extension-example": "workspace:*",
     "eslint": "^10.12.0",
     "fast-check": "^4.10.2",
     "prettier": "^3.9.10",
@@ -43,10 +41,18 @@
     "typescript-eslint": "^8.71.2",
     "vitest": "^5.0.4",
     "ajv": "^8.20.0",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "@doc-base/schema": "workspace:*",
+    "@doc-base/extension-api": "workspace:*",
+    "@doc-base/sources": "workspace:*",
+    "@doc-base/core": "workspace:*",
+    "@doc-base/starlight": "workspace:*",
+    "doc-base": "workspace:*",
+    "@yarnpkg/cli-dist": "4.18.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/miki-open-source/doc-base.git"
-  }
+  },
+  "packageManager": "pnpm@12.11.2"
 }

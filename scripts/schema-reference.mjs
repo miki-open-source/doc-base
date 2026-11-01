@@ -45,6 +45,6 @@ const formatted = await format(content, { parser: "markdown" });
 if (process.argv.includes("--check")) {
   if ((await readFile("docs/schema-reference.md", "utf8")) !== formatted)
     throw new Error(
-      "Schema reference is out of date. Run npm run docs:reference.",
+      "Schema reference is out of date. Run pnpm run docs:reference.",
     );
 } else await writeFile("docs/schema-reference.md", formatted);

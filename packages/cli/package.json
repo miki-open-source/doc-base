@@ -20,10 +20,10 @@
     }
   },
   "dependencies": {
-    "@doc-base/core": "1.0.0",
-    "@doc-base/schema": "1.0.0",
-    "@doc-base/sources": "1.0.0",
-    "@doc-base/starlight": "1.0.0",
+    "@doc-base/core": "workspace:*",
+    "@doc-base/schema": "workspace:*",
+    "@doc-base/sources": "workspace:*",
+    "@doc-base/starlight": "workspace:*",
     "chokidar": "^5.0.0",
     "open": "^11.0.4"
   },

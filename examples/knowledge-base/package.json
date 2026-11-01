@@ -10,8 +10,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "doc-base": "1.0.0",
-    "doc-base-extension-example": "file:../extension"
+    "doc-base": "workspace:*",
+    "doc-base-extension-example": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0"

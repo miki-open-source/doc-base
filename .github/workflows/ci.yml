@@ -55,3 +55,7 @@ jobs:
       - run: pnpm run test:dev
         env:
           TEST_DEV_BROWSER: "1"
+      - run: pnpm run test:dev
+        env:
+          TEST_DEV_BROWSER: "1"
+          TEST_DEV_BASE_URL: /manual/

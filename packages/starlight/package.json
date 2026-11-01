@@ -20,7 +20,7 @@
     }
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/markdown-remark": "^7.3.5",
     "@astrojs/starlight": "^0.42.6",
     "@doc-base/schema": "workspace:*",
     "astro": "^7.3.8"

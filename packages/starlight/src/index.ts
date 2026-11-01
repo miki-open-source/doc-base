@@ -12,6 +12,8 @@ import path from "node:path";
 import { promoteDirectory } from "./directories.js";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { createServer, type ServerResponse } from "node:http";
+import { createConnection } from "node:net";
+import type { Duplex } from "node:stream";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 type DevServer = Awaited<ReturnType<typeof dev>>;
@@ -24,6 +26,7 @@ import {
   stableJson,
   VERSION,
   type Compilation,
+  type NavEntry,
 } from "@doc-base/schema";
 export async function checkCompatibility(): Promise<Record<string, string>> {
   const versions: Record<string, string> = {};
@@ -150,6 +153,17 @@ events.onmessage=event=>{
 </script>
 <style>aside{padding:1rem;background:#8b2300;color:white;font-weight:bold}aside[hidden]{display:none}</style>
 `;
+function starlightNavigation(entries: NavEntry[], baseUrl: string): NavEntry[] {
+  return entries.map((entry) => ({
+    ...entry,
+    ...(entry.link?.startsWith(baseUrl)
+      ? { link: "/" + entry.link.slice(baseUrl.length) }
+      : {}),
+    ...(entry.items
+      ? { items: starlightNavigation(entry.items, baseUrl) }
+      : {}),
+  }));
+}
 export async function generate(
   compilation: Compilation,
   options: { retainGeneration?: boolean } = {},
@@ -395,7 +409,7 @@ export default defineConfig(mergeConfig(customization, {
     ...starlightOptions,
     title: ${JSON.stringify(compilation.config.site.title)},
     description: ${JSON.stringify(compilation.config.site.description)},
-    ${compilation.config.navigation ? "sidebar: " + JSON.stringify(projection.navigation) + "," : ""}
+    ${compilation.config.navigation ? "sidebar: " + JSON.stringify(starlightNavigation(projection.navigation, projection.baseUrl)) + "," : ""}
     pagefind: false,
     components: {
       Search: './src/components/Search.astro',
@@ -584,6 +598,13 @@ export async function devSite(
       const server = await dev({
         ...configFor(path.join(generated, projection.audience ?? "default")),
         server: { ...compilation.config.development, port: 0, open: false },
+        vite: {
+          server: {
+            ws: {
+              clientPort: compilation.config.development.port,
+            },
+          },
+        },
       });
       servers.push({ baseUrl: projection.baseUrl, server });
     }
@@ -593,6 +614,10 @@ export async function devSite(
     const clients = new Set<ServerResponse>();
     const sendStatus = (response: ServerResponse) =>
       response.write("data: " + JSON.stringify(status) + "\n\n");
+    const selectServer = (url: string) =>
+      servers.find((item) => url.startsWith(item.baseUrl)) ??
+      servers[servers.length - 1];
+    const webSocketConnections = new Set<Duplex>();
     const router = createServer((request, response) => {
       if (
         servers.some(
@@ -610,10 +635,31 @@ export async function devSite(
         request.once("close", () => clients.delete(response));
         return;
       }
-      const selected =
-        servers.find((item) => (request.url ?? "/").startsWith(item.baseUrl)) ??
-        servers[servers.length - 1];
-      selected.server.handle(request, response);
+      selectServer(request.url ?? "/").server.handle(request, response);
+    });
+    router.on("upgrade", (request, socket, head) => {
+      const { address } = selectServer(request.url ?? "/").server;
+      const upstream = createConnection(address.port, address.address);
+      webSocketConnections.add(socket);
+      const close = () => {
+        webSocketConnections.delete(socket);
+        socket.destroy();
+        upstream.destroy();
+      };
+      socket.once("error", close);
+      socket.once("close", close);
+      upstream.once("error", close);
+      upstream.once("close", close);
+      upstream.once("connect", () => {
+        const headers = request.rawHeaders;
+        let handshake = `${request.method} ${request.url} HTTP/${request.httpVersion}\r\n`;
+        for (let index = 0; index < headers.length; index += 2)
+          handshake += `${headers[index]}: ${headers[index + 1]}\r\n`;
+        upstream.write(handshake + "\r\n");
+        if (head.length) upstream.write(head);
+        socket.pipe(upstream);
+        upstream.pipe(socket);
+      });
     });
     await new Promise<void>((resolve, reject) => {
       router.once("error", reject);
@@ -630,10 +676,13 @@ export async function devSite(
       },
       async stop() {
         router.closeAllConnections();
-        await new Promise<void>((resolve, reject) =>
-          router.close((error) => (error ? reject(error) : resolve())),
-        );
-        await Promise.all(servers.map((item) => item.server.stop()));
+        for (const socket of webSocketConnections) socket.destroy();
+        await Promise.all([
+          new Promise<void>((resolve, reject) =>
+            router.close((error) => (error ? reject(error) : resolve())),
+          ),
+          ...servers.map((item) => item.server.stop()),
+        ]);
         await rm(generated, { recursive: true, force: true });
       },
     };

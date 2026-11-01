@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("GIVEN combined documentation\nWHEN switching audiences and searching\nTHEN content, routes and keyboard interactions work", async ({
+test("GIVEN combined documentation\nWHEN 1 switching audiences\nTHEN 1 restricted content becomes visible\nWHEN 2 searching and pressing Escape\nTHEN 2 search results appear and the dialog closes\nWHEN 3 following a sidebar link\nTHEN 3 the audience prefix appears exactly once", async ({
   page,
 }) => {
   // GIVEN
@@ -26,6 +26,16 @@ test("GIVEN combined documentation\nWHEN switching audiences and searching\nTHEN
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
+  // WHEN 3
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Getting started", exact: true })
+    .click();
+  // THEN 3
+  await expect(page).toHaveURL("/_audience/contributor/guides/quick-start/");
+  await expect(
+    page.getByRole("heading", { name: "Getting started", exact: true }),
+  ).toBeVisible();
 });
 test("old paths redirect directly to canonical pages", async ({ page }) => {
   await page.goto("/getting-started/");
